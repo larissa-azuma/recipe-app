@@ -1,28 +1,56 @@
-import { Card, CardContent, CardMedia, Container,Grid,TextField, Typography } from "@mui/material";
+import { Card, CardContent, CardMedia, Container,Grid,TextField, Typography,CardActionArea} from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function Recipes () {
+    const[ recipes,setRecipes]=useState([]);
+
+    const getRecipes =() =>{
+        //prepare URL
+        const url= new URL(" https://api.spoonacular.com/recipes/complexSearch")
+        url.searchParams .append('apiKey', '180206eb4f22498897790fb6903fd4fe');
+        // fetch recipes from API
+     fetch(url)
+        .then(response => response.json())
+        .then(data =>{
+         // update recipes state
+            setRecipes(data.results);
+        // console.log (error);
+        })
+        .catch(error =>{
+            console.log(error);
+        })  
+    }
+
+useEffect(getRecipes, []);
+
     return(
-        <Container sx={{my: "2rem"}}  maxWidth="sm">
+        <Container sx={{my: "2rem"}} > 
             <TextField fullWidth 
             id="outlined-basic" 
             label="Enter a keyword to search recipes and hit enter" 
             variant="outlined" />   
 
             <Grid sx={{mt: "1rem"}} container spacing={3}>
-                <Grid item xs={4}>
-                    <Card>
-                        <CardMedia 
-                        component= "img"
-                        image="https://media.istockphoto.com/id/1439228262/photo/delicious-fried-oyster-mushrooms-and-shiitake-mushrooms-with-vegetables-in-a-spicy-sauce.webp?b=1&s=170667a&w=0&k=20&c=BaqOX8X33AzXY0Km5BZ-5dQloPRuzR11dTCYwJn-k30="
-                                />
-        
-                    </Card>
-                    <CardContent>
-                        <Typography variant="h5">Recipe App</Typography>
-                    </CardContent>
-                </Grid>
-              </Grid>                
+              {recipes.map(recipe => ( <Grid item xs={4}>
+                <Card sx={{ maxWidth: 345,height: '100%'}}>
+                <CardActionArea sx={{height:'100%'}}> 
+                <CardMedia
+                    component="img"
+                    height="140"
+                     image={recipe.image}
+                     alt={recipe.title}
+        />
+                 <CardContent>
+                      <Typography gutterBottom 
+                   variant="h5" component="div">
+                         {recipe.title}
+                 </Typography>
+                 </CardContent>
+               </CardActionArea>
+                 </Card>
+                </Grid>))}
+            </Grid>;            
         </Container>
     );
 
-}
+              }
