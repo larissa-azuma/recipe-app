@@ -10,11 +10,15 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import emptyIcon from "../../assets/images/empty.svg";
+import loadingIcon from "../../assets/images/infinite-spinner.svg"
+import { Link } from "react-router-dom";
 
 export default function Recipes() {
   const [recipes, setRecipes] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [loading, setLoading]=  useState(false);
   const getRecipes = () => {
+    setLoading(true);
     //prepare URL
     const url = new URL(" https://api.spoonacular.com/recipes/complexSearch");
     url.searchParams.append(
@@ -32,7 +36,8 @@ export default function Recipes() {
       })
       .catch((error) => {
         console.log(error);
-      });
+      })
+      .finally(() => setLoading(false))
   };
 
   useEffect(getRecipes, [keyword]);
@@ -49,7 +54,7 @@ export default function Recipes() {
         }
       />
       <Grid sx={{ mt: "1rem" }} container spacing={3}>
-        {recipes.length > 0 ? (
+        {loading ? <img src={loadingIcon} width="50%" />: recipes.length > 0 ? (
           recipes.map((recipe) => (
             <Grid item xs={4}>
               <Card sx={{ maxWidth: 345, height: "100%" }}>
@@ -61,9 +66,11 @@ export default function Recipes() {
                     alt={recipe.title}
                   />
                   <CardContent>
+                  <Link to={`/recipes/${recipe.id}`}>
                     <Typography gutterBottom variant="h5" component="div">
                       {recipe.title}
                     </Typography>
+                    </Link>
                   </CardContent>
                 </CardActionArea>
               </Card>
@@ -73,7 +80,7 @@ export default function Recipes() {
           <img src={emptyIcon} width={"50%"}/>
         )}
       </Grid>
-      ;
+
     </Container>
   );
 }
