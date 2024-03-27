@@ -23,9 +23,7 @@ export default function Recipe() {
   return (
     <>
       <Navbar />
-      {isLoading ? (
-        <img src={loadingIcon} />
-      ) : (
+      {isLoading ? ( <img src={loadingIcon} />) : (
         <Container>
           <h1> {data.title} </h1>
 
